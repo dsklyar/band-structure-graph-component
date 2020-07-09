@@ -3,7 +3,7 @@ import { createUseStyles } from "react-jss";
 import { styles } from "./App.css";
 import { ChartWrapperComponent } from "./components/chart-wrapper.component";
 import { LineChartComponent } from "./components/line-chart.component";
-import data from "../newData.json";
+import data from "../data.json";
 
 const useStyles = createUseStyles(styles);
 

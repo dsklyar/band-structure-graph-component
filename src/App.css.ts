@@ -1,5 +1,8 @@
 export const styles = {
-	container: {},
+	container: {
+		width: 700,
+		height: 400,
+	},
 	"@global": {
 		button: {
 			padding: 0,

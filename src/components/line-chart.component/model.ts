@@ -19,6 +19,15 @@ interface IBoundary {
 interface IModel {
 	legend: Record<string, number>;
 	records: Record<string, number>[];
+	referenceLines: Record<string, number>;
+	fermiLine: number;
+	conductionLowestEP: IPoint;
+	valenceHighestEP: IPoint;
+}
+
+interface IPoint {
+	x: number;
+	y: number;
 }
 
 interface IModelOptions {
@@ -30,8 +39,15 @@ export class ModelGenerator {
 		const records: Record<string, number>[] = [];
 		const legend: Record<string, number> = {};
 
-		const { distances, energy } = dataInput;
+		const {
+			distances,
+			energy,
+			ticks: { distance, label },
+		} = dataInput;
 		const map: Record<string, Record<string, number>> = {};
+
+		const conductionLowestEP: IPoint = { x: Number.MAX_SAFE_INTEGER, y: Number.MAX_SAFE_INTEGER };
+		const valenceHighestEP: IPoint = { x: Number.MIN_SAFE_INTEGER, y: Number.MIN_SAFE_INTEGER };
 
 		for (let distanceSetIndex = 0; distanceSetIndex < distances.length; distanceSetIndex++) {
 			// debugger;
@@ -88,15 +104,23 @@ export class ModelGenerator {
 
 					if (entry) {
 						map[distanceValue] = map[distanceValue] ? { ...map[distanceValue], ...entry } : entry;
+
+						if (entry[spinUpsetKey] < conductionLowestEP.y && entry[spinUpsetKey] > 0) {
+							conductionLowestEP.y = entry[spinUpsetKey];
+							conductionLowestEP.x = entry.x;
+						}
+						if (entry[spinUpsetKey] > valenceHighestEP.y && entry[spinUpsetKey] < 0) {
+							valenceHighestEP.y = entry[spinUpsetKey];
+							valenceHighestEP.x = entry.x;
+						}
+						if (!legend[spinUpsetKey]) {
+							legend[spinUpsetKey] = 1;
+						}
+						if (!legend[spinDownKey]) {
+							legend[spinDownKey] = 1;
+						}
 					} else {
 						continue;
-					}
-
-					if (!legend[spinUpsetKey]) {
-						legend[spinUpsetKey] = 1;
-					}
-					if (!legend[spinDownKey]) {
-						legend[spinDownKey] = 1;
 					}
 				}
 			}
@@ -109,10 +133,19 @@ export class ModelGenerator {
 			records.push(entry);
 		});
 
+		const referenceLines = label.reduce((acc, el, index) => {
+			acc[el] = distance[index];
+			return acc;
+		}, {} as Record<string, number>);
+
 		// debugger;
 		return {
 			legend,
 			records,
+			referenceLines,
+			fermiLine: dataInput.zero_energy,
+			conductionLowestEP,
+			valenceHighestEP,
 		};
 	}
 }

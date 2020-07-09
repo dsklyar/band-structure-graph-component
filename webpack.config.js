@@ -30,11 +30,15 @@ module.exports = {
 					},
 				],
 			},
-			{
-				test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,
-				include: [path.join(__dirname, "src/assets")],
-				loader: "file-loader?name=assets/[name].[ext]",
-			},
+			// {
+			// 	test: /\.min.css$/i,
+			// 	use: ["css-loader"],
+			// },
+			// {
+			// 	test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,
+			// 	// include: [path.join(__dirname, "src/assets")],
+			// 	loader: "file-loader?name=assets/[name].[ext]",
+			// },
 			// All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
 			// {
 			//   enforce: "pre",
