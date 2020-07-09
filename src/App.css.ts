@@ -26,6 +26,28 @@ export const styles = {
 			justifyContent: "center",
 		},
 	},
+	header: {
+		width: 600,
+		height: 80,
+		backgroundColor: "#1E1E1E",
+		padding: 15,
+		boxSizing: "border-box",
+		"& div": {
+			color: "grey",
+			fontSize: 13,
+			fontFamily: "monospace",
+			// marginTop: 3,
+			padding: {
+				left: 10,
+				right: 10,
+			},
+		},
+		"& div:first-child": {
+			color: "#CBCBCB",
+			fontSize: 26,
+			margin: 0,
+		},
+	},
 	helper: {
 		width: 600,
 		height: 160,

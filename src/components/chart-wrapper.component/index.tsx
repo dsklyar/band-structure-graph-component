@@ -22,9 +22,14 @@ export const ChartWrapperComponent: React.FC<IProps> = ({
 		if (!chartWrapperRef.current) {
 			return;
 		}
+		/**
+		 * TODO
+		 * This could cause an error when converting
+		 * DOM to image, find a better solution
+		 */
 		setWatermark(true);
 		DomToImage.toBlob(chartWrapperRef.current).then((blob) => {
-			saveAs(blob);
+			saveAs(blob, "band-structure-graph");
 			setWatermark(false);
 		});
 	};

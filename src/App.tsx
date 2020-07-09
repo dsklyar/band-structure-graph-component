@@ -16,6 +16,13 @@ export const App: React.FC = () => {
 	return (
 		<div>
 			<CardComponent>
+				<div className={classes.header}>
+					<div>Band Structure Chart Component</div>
+					<div>by Daniel Sklyar</div>
+				</div>
+			</CardComponent>
+			<br />
+			<CardComponent>
 				<ChartWrapperComponent chart={chart} />
 			</CardComponent>
 			<br />

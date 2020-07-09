@@ -1,3 +1,5 @@
+// TODO Move all of the interface into a separate folder
+
 export interface IDataInput {
 	zero_energy: number;
 	ticks: {
@@ -49,6 +51,12 @@ export class ModelGenerator {
 		const conductionLowestEP: IPoint = { x: Number.MAX_SAFE_INTEGER, y: Number.MAX_SAFE_INTEGER };
 		const valenceHighestEP: IPoint = { x: Number.MIN_SAFE_INTEGER, y: Number.MIN_SAFE_INTEGER };
 
+		/**
+		 * TODO
+		 * 3 nested for loops might not be necessary here
+		 * Explore more efficent way of parsing JSON data
+		 */
+
 		for (let distanceSetIndex = 0; distanceSetIndex < distances.length; distanceSetIndex++) {
 			// debugger;
 			const distanceSet = distances[distanceSetIndex];
@@ -69,7 +77,11 @@ export class ModelGenerator {
 
 					let entry = null;
 
-					// TODO
+					/**
+					 * TODO
+					 * Move any "middleware" logic such this boundary clamping
+					 * into a separate function
+					 */
 
 					if (options?.boundary) {
 						const { low, high } = options?.boundary;
@@ -104,6 +116,12 @@ export class ModelGenerator {
 
 					if (entry) {
 						map[distanceValue] = map[distanceValue] ? { ...map[distanceValue], ...entry } : entry;
+
+						/**
+						 * TODO
+						 * Move any "middleware" logic such this min and max logic
+						 * into a separate function
+						 */
 
 						if (entry[spinUpsetKey] < conductionLowestEP.y && entry[spinUpsetKey] > 0) {
 							conductionLowestEP.y = entry[spinUpsetKey];
