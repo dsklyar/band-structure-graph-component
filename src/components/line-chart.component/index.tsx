@@ -1,4 +1,6 @@
 import * as React from "react";
+import { createUseStyles } from "react-jss";
+import { styles } from "./index.css";
 import {
 	LineChart,
 	XAxis,
@@ -9,7 +11,9 @@ import {
 	ReferenceLine,
 	ReferenceDot,
 } from "recharts";
-import { ModelGenerator, IDataInput } from "./model";
+import { ModelGenerator, IDataInput } from "../../utils/model.util";
+
+const useStyles = createUseStyles(styles);
 
 interface RechartsFuncEvent {
 	activeLabel: number;
@@ -26,6 +30,7 @@ interface IMarkState {
 
 export const LineChartComponent: React.FC<IProps> = ({ data }: IProps) => {
 	//#region Hooks
+	const classes = useStyles();
 	const [{ markedX, chartMarked }, setMarkedState] = React.useState<IMarkState>({
 		markedX: null,
 		chartMarked: false,
@@ -43,7 +48,7 @@ export const LineChartComponent: React.FC<IProps> = ({ data }: IProps) => {
 	} = React.useMemo(
 		() =>
 			modelGen.generateModel(data, {
-				boundary: { low: -6, high: 6 },
+				boundary: { low: -2, high: 2 },
 			}),
 		[data],
 	);
@@ -66,7 +71,7 @@ export const LineChartComponent: React.FC<IProps> = ({ data }: IProps) => {
 					type="monotone"
 					dataKey={key}
 					dot={false}
-					stroke={key.includes("Down") ? "#dedede" : "#6f6f6f"}
+					stroke={key.includes("Down") ? "#BB86FC" : "#03DAC5"}
 					strokeWidth={2}
 					isAnimationActive={false}
 				/>
@@ -85,7 +90,9 @@ export const LineChartComponent: React.FC<IProps> = ({ data }: IProps) => {
 						{
 							position: "bottom",
 							value: key,
-							fontSize: 14,
+							fontSize: 13,
+							fontFamily: "monospace",
+							fill: "#CBCBCB",
 							// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						} as any
 					}
@@ -102,19 +109,24 @@ export const LineChartComponent: React.FC<IProps> = ({ data }: IProps) => {
 
 	return (
 		<ResponsiveContainer>
-			<LineChart
-				data={records}
-				margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
-				onClick={onChartClick}
-			>
+			<LineChart data={records} margin={{ left: -40, right: 10 }} onClick={onChartClick}>
 				<ReferenceLine y={fermiLine} stroke={"lightblue"} strokeWidth={3} strokeDasharray="3 3" />
 				<ReferenceDot y={conductionLowestEP.y} x={conductionLowestEP.x} r={5} fill={"red"} />
 				<ReferenceDot y={valenceHighestEP.y} x={valenceHighestEP.x} r={5} fill={"green"} />
 				{markedLine}
 				{memoReferenceLines}
 				{memoLines}
-				<XAxis type={"number"} dataKey={"x"} tick={false} />
-				<YAxis type={"number"} />
+				<XAxis type={"number"} dataKey={"x"} tick={false} domain={["dataMin", "dataMax"]} />
+				<YAxis
+					type={"number"}
+					tick={{
+						fontSize: 13,
+						fontFamily: "monospace",
+						fill: "#CBCBCB",
+						// dx: -4,
+						// dy: -1,
+					}}
+				/>
 			</LineChart>
 		</ResponsiveContainer>
 	);
