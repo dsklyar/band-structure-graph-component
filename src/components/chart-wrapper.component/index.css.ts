@@ -9,10 +9,7 @@ export const styles = {
 	chartWrapper: {
 		width: "100%",
 		height: 300,
-		padding: { top: 20, left: 10, right: 10 },
-		boxSizing: "border-box",
 		backgroundColor: "#1E1E1E",
-		position: "relative",
 	},
 	toolbar: {
 		height: 50,
