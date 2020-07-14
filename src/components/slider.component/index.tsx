@@ -142,6 +142,7 @@ export const SliderComponent: React.FC<IProps> = ({
 				left: `${percent}%`,
 			};
 		} else {
+			console.log("dead");
 			return undefined;
 		}
 	};
@@ -183,13 +184,46 @@ export const SliderComponent: React.FC<IProps> = ({
 		}
 	};
 
+	const genTicks = (): React.ReactNode => {
+		const fullRange = maxValue - minValue;
+		const tickCount = fullRange / step / 4;
+		const retval = [];
+		for (let i = 0; i < tickCount; i++) {
+			retval.push({ key: `tick-${i}`, tag: i + 1, left: `${i * (100 / tickCount)}%` });
+		}
+		return (
+			<>
+				{retval.map(({ key, tag, left }) => (
+					<span key={key} className={classes.tick} style={{ left }} />
+				))}
+			</>
+		);
+	};
+
 	return (
 		<div className={classes.spec}>
 			<div ref={containerRef} className={classes.container}>
 				<div className={classes.rail} />
 				<div className={classes.track} style={genTrackStyle()} />
-				<div ref={lowHandleRef} className={classes.thumb} style={genThumbStyle("low")} />
-				<div ref={highHandleRef} className={classes.thumb} style={genThumbStyle("high")} />
+				{genTicks()}
+				<div
+					ref={lowHandleRef}
+					className={
+						mouseDown && thumbsState.selected === "low"
+							? classes.thumbActive
+							: classes.thumbInactive
+					}
+					style={genThumbStyle("low")}
+				/>
+				<div
+					ref={highHandleRef}
+					className={
+						mouseDown && thumbsState.selected === "high"
+							? classes.thumbActive
+							: classes.thumbInactive
+					}
+					style={genThumbStyle("high")}
+				/>
 			</div>
 		</div>
 	);

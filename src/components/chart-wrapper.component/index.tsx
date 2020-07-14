@@ -71,8 +71,8 @@ export const ChartWrapperComponent: React.FC<IProps> = ({
 					minValue={-10}
 					step={1}
 					current={{
-						low: -6,
-						high: 5,
+						low: -10,
+						high: 10,
 					}}
 					onChangeCapture={onChangeCapture}
 				/>

@@ -36,5 +36,22 @@ export const styles = {
 		borderRadius: "50%",
 		backgroundColor: "#FD413C",
 		userSelect: "none",
+		transition: "box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+	},
+	thumbInactive: {
+		extend: "thumb",
+		"&:hover": {
+			boxShadow: "0px 0px 0px 8px rgba(253, 65, 60, 0.16)",
+		},
+	},
+	thumbActive: {
+		extend: "thumb",
+		boxShadow: "0px 0px 0px 14px rgba(253, 65, 60, 0.16)",
+	},
+	tick: {
+		height: 2,
+		width: 2,
+		position: "absolute",
+		backgroundColor: "#342C2F",
 	},
 };
