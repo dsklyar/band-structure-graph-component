@@ -17,11 +17,12 @@ const useStyles = createUseStyles(styles);
 
 interface IProps {
 	data: IDataInput;
+	dataMin: number;
+	dataMax: number;
 }
 
-export const LineChartComponent: React.FC<IProps> = ({ data }: IProps) => {
+export const LineChartComponent: React.FC<IProps> = ({ data, dataMin, dataMax }: IProps) => {
 	const classes = useStyles();
-	const [dataMin, dataMax] = [-4, 3];
 
 	const modelGen = new ModelGenerator();
 	const {
@@ -36,7 +37,7 @@ export const LineChartComponent: React.FC<IProps> = ({ data }: IProps) => {
 			modelGen.generateModel(data, {
 				boundary: { low: dataMin, high: dataMax },
 			}),
-		[data],
+		[data, dataMin, dataMax],
 	);
 
 	//#region JSX Function

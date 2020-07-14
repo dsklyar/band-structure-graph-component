@@ -31,5 +31,6 @@ export const styles = {
 		fontWeight: "bold",
 		fontFamily: "monospace",
 		fontSize: 15,
+		userSelect: "none",
 	},
 };

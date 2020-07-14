@@ -4,18 +4,32 @@ import { saveAs } from "file-saver";
 import { createUseStyles } from "react-jss";
 import { styles } from "./index.css";
 import { WatermarkComponent } from "../wmark.component";
+import { SliderComponent } from "../slider.component";
+import { IDataInput } from "@/src/utils/model.util";
+import { LineChartComponent } from "../line-chart.component";
 
 const useStyles = createUseStyles(styles);
 
+const DEFAULT_AXIS_DOMAIN: IAxisDomainState = {
+	dataMin: -4,
+	dataMax: 6,
+};
+
 interface IProps {
-	chart: JSX.Element;
+	data: IDataInput;
+}
+
+interface IAxisDomainState {
+	dataMin: number;
+	dataMax: number;
 }
 
 export const ChartWrapperComponent: React.FC<IProps> = ({
-	chart,
+	data,
 }: React.PropsWithChildren<IProps>) => {
 	const classes = useStyles();
 	const [watermarkEnabled, setWatermark] = React.useState<boolean>();
+	const [axisDomain, setAxisDomain] = React.useState<IAxisDomainState>(DEFAULT_AXIS_DOMAIN);
 	const chartWrapperRef = React.useRef<HTMLDivElement>(null);
 
 	const onSaveClick = () => {
@@ -34,10 +48,17 @@ export const ChartWrapperComponent: React.FC<IProps> = ({
 		});
 	};
 
+	const onChangeCapture = (lowValue: number, highValue: number): void => {
+		setAxisDomain({
+			dataMin: lowValue,
+			dataMax: highValue,
+		});
+	};
+
 	return (
 		<div className={classes.container}>
 			<div ref={chartWrapperRef} className={classes.chartWrapper}>
-				{chart}
+				<LineChartComponent data={data} dataMin={axisDomain.dataMin} dataMax={axisDomain.dataMax} />
 				{watermarkEnabled ? (
 					<div className={classes.watermarkWrapper}>
 						<WatermarkComponent />
@@ -45,6 +66,16 @@ export const ChartWrapperComponent: React.FC<IProps> = ({
 				) : null}
 			</div>
 			<div className={classes.toolbar}>
+				<SliderComponent
+					maxValue={10}
+					minValue={-10}
+					step={1}
+					current={{
+						low: -6,
+						high: 5,
+					}}
+					onChangeCapture={onChangeCapture}
+				/>
 				<button className={classes.saveButton} onClick={onSaveClick}>
 					Save
 				</button>

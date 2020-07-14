@@ -2,7 +2,6 @@ import * as React from "react";
 import { createUseStyles } from "react-jss";
 import { styles } from "./App.css";
 import { ChartWrapperComponent } from "./components/chart-wrapper.component";
-import { LineChartComponent } from "./components/line-chart.component";
 import { CardComponent } from "./components/card.component";
 import data from "../data.json";
 
@@ -10,8 +9,6 @@ const useStyles = createUseStyles(styles);
 
 export const App: React.FC = () => {
 	const classes = useStyles();
-
-	const chart = <LineChartComponent data={data} />;
 
 	return (
 		<div>
@@ -23,7 +20,7 @@ export const App: React.FC = () => {
 			</CardComponent>
 			<br />
 			<CardComponent>
-				<ChartWrapperComponent chart={chart} />
+				<ChartWrapperComponent data={data} />
 			</CardComponent>
 			<br />
 			<CardComponent>

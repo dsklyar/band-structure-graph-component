@@ -7,6 +7,7 @@ import {
 	XAxis,
 	YAxis,
 } from "recharts";
+import { ToolTipComponent } from "../tooltip.component";
 
 interface IProps {
 	records: Record<string, number>[];
@@ -38,7 +39,6 @@ export const ChatMarkerComponent: React.FC<IProps> = React.memo(({ records }: IP
 
 	//#region Handlers
 	const onChartClick: RechartsFunction = (e: RechartsFuncEvent) => {
-		console.log(e);
 		if (!e) {
 			return;
 		}
@@ -53,57 +53,15 @@ export const ChatMarkerComponent: React.FC<IProps> = React.memo(({ records }: IP
 
 	//#region JSX
 
-	const customLabel = ({ viewBox: { x, y } }: any) => {
-		console.log(x, y);
-		return (
-			<svg x={x} y={chartY as number}>
-				<g>
-					{/* <rect x="0" y="0" width="40" height="15" fill="grey"></rect> */}
-					<foreignObject x="0" y="0" width="48.5" height="15">
-						<div
-							style={{
-								display: "flex",
-							}}
-						>
-							<div
-								style={{
-									width: 0,
-									height: 0,
-									borderTop: "7.5px solid transparent",
-									borderBottom: "7.5px solid transparent",
-									borderRight: "7.5px solid grey",
-								}}
-							/>
-							<div
-								style={{
-									width: 40,
-									height: 15,
-									borderTopRightRadius: 4,
-									borderBottomRightRadius: 4,
-									backgroundColor: "grey",
-									justifyContent: "center",
-									display: "flex",
-								}}
-							>
-								<span
-									style={{
-										fontFamily: "monospace",
-										fontSize: 12,
-										color: "#FFF",
-									}}
-								>
-									{markedX?.toFixed(3)}
-								</span>
-							</div>
-						</div>
-					</foreignObject>
-				</g>
-			</svg>
-		);
-	};
-
 	const markedLine = chartMarked && markedX && (
-		<ReferenceLine x={markedX} stroke={"#CF6679"} strokeWidth={5} label={customLabel} />
+		<ReferenceLine
+			x={markedX}
+			stroke={"#CF6679"}
+			strokeWidth={5}
+			label={(props) => (
+				<ToolTipComponent viewBox={props.viewBox} chartY={chartY as number} value={markedX} />
+			)}
+		/>
 	);
 	//#endregion
 
