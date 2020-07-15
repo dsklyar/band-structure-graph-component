@@ -52,6 +52,13 @@ export const styles = {
 		height: 2,
 		width: 2,
 		position: "absolute",
+	},
+	darkTick: {
+		extend: "tick",
 		backgroundColor: "#342C2F",
+	},
+	lightTick: {
+		extend: "tick",
+		backgroundColor: "#FD413C",
 	},
 };

@@ -4,6 +4,12 @@ import { styles } from "./index.css";
 
 const useStyles = createUseStyles(styles);
 
+enum MouseButton {
+	Right = 2,
+	Middle = 1,
+	Left = 0,
+}
+
 interface IProps {
 	minValue: number;
 	maxValue: number;
@@ -36,10 +42,11 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 			},
 		});
 
-		React.useEffect(() => {
-			const onMouseUpHandle = (e: MouseEvent): void => {
-				if (e.button !== 2 && mouseDown) {
-					console.log("calling for up change");
+		//#region Document useEffect cbs
+
+		const onMouseUpHandle = React.useCallback(
+			(e: MouseEvent): void => {
+				if (e.button === MouseButton.Left && mouseDown) {
 					setMouseDown(false);
 					setThumbsState({
 						...thumbsState,
@@ -60,8 +67,11 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 							}, 100);
 					}
 				}
-			};
-			const onMouseDownHandle = (e: MouseEvent): void => {
+			},
+			[high, low, mouseDown, onChangeCapture, thumbsState],
+		);
+		const onMouseDownHandle = React.useCallback(
+			(e: MouseEvent): void => {
 				if (lowHandleRef.current?.contains(e.target as Node | null)) {
 					setThumbsState({
 						...thumbsState,
@@ -78,25 +88,31 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 					lowHandleRef.current?.contains(e.target as Node | null) ||
 					highHandleRef.current?.contains(e.target as Node | null)
 				) {
-					console.log("calling for down change");
-					setMouseDown(true);
+					if (e.button === MouseButton.Left) {
+						setMouseDown(true);
+					}
 				}
-			};
-			const onMouseMoveHandle = (e: MouseEvent): void => {
+			},
+			[thumbsState],
+		);
+		const onMouseClickHandle = React.useCallback(
+			(e: MouseEvent): void => {
 				const rect = containerRef.current?.getBoundingClientRect();
-				if (!mouseDown || !rect || !thumbsState.selected) {
+
+				// TODO Needs refactoring
+
+				if (!rect || !containerRef.current?.contains(e.target as Node | null)) {
 					return;
 				}
-				console.log("calling for move change");
+
+				const curLow = thumbsState.boundaries["low"].value;
+				const curHigh = thumbsState.boundaries["high"].value;
+
 				const [start, end] = [rect.left, rect.right];
 				const valueRange = maxValue - minValue;
 				const pixelRange = end - start;
 
 				const isSafe = start <= e.x && e.x <= end;
-				const isLowHandle = thumbsState.selected === "low";
-				const otherHandleValue = isLowHandle
-					? thumbsState.boundaries["high"].value
-					: thumbsState.boundaries["low"].value;
 
 				const pixelPercent = (e.x - start) / pixelRange;
 				const value = pixelPercent * valueRange - Math.abs(minValue);
@@ -106,7 +122,68 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 
 				const tickedValue = isNextTick ? Math.floor(value / step) + 1 : Math.floor(value / step);
 
-				const isOverlapping = isLowHandle
+				const isLowThumbCloser = Math.abs(low - value) < Math.abs(high - value);
+				const otherHandleValue = isLowThumbCloser ? curHigh : curLow;
+
+				const isOverlapping = isLowThumbCloser
+					? otherHandleValue <= tickedValue
+					: tickedValue <= otherHandleValue;
+
+				const thumbKey = isLowThumbCloser ? "low" : "high";
+
+				isSafe && !isOverlapping
+					? setThumbsState({
+							...thumbsState,
+							boundaries: {
+								...thumbsState.boundaries,
+								[thumbKey]: { value: tickedValue },
+							},
+					  })
+					: null;
+
+				if (onChangeCapture && isSafe && !isOverlapping) {
+					const hasChanged = thumbsState.boundaries[thumbKey].value !== tickedValue;
+
+					hasChanged &&
+						setTimeout(() => {
+							onChangeCapture(
+								thumbsState.boundaries["low"].value,
+								thumbsState.boundaries["high"].value,
+							);
+						}, 100);
+				}
+			},
+			[high, low, maxValue, minValue, step, thumbsState],
+		);
+		const onMouseMoveHandle = React.useCallback(
+			(e: MouseEvent): void => {
+				const rect = containerRef.current?.getBoundingClientRect();
+				if (!mouseDown || !rect || !thumbsState.selected) {
+					return;
+				}
+
+				const curLow = thumbsState.boundaries["low"].value;
+				const curHigh = thumbsState.boundaries["high"].value;
+
+				const [start, end] = [rect.left, rect.right];
+				const valueRange = maxValue - minValue;
+				const pixelRange = end - start;
+
+				const isSafe = start <= e.x && e.x <= end;
+
+				const pixelPercent = (e.x - start) / pixelRange;
+				const value = pixelPercent * valueRange - Math.abs(minValue);
+
+				const tickRemainder = value / step - Math.floor(value / step);
+				const isNextTick = tickRemainder >= 0.5;
+
+				const tickedValue = isNextTick ? Math.floor(value / step) + 1 : Math.floor(value / step);
+
+				const isLowThumbSelected = thumbsState.selected === "low";
+
+				const otherHandleValue = isLowThumbSelected ? curHigh : curLow;
+
+				const isOverlapping = isLowThumbSelected
 					? otherHandleValue <= tickedValue
 					: tickedValue <= otherHandleValue;
 
@@ -119,30 +196,25 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 							},
 					  })
 					: null;
-			};
+			},
+			[maxValue, minValue, mouseDown, step, thumbsState],
+		);
 
+		//#endregion
+
+		React.useEffect(() => {
 			document.addEventListener("mouseup", onMouseUpHandle);
 			document.addEventListener("mousedown", onMouseDownHandle);
 			document.addEventListener("mousemove", onMouseMoveHandle);
+			document.addEventListener("click", onMouseClickHandle);
 
 			return () => {
 				document.removeEventListener("mouseup", onMouseUpHandle);
 				document.removeEventListener("mousedown", onMouseDownHandle);
 				document.removeEventListener("mousemove", onMouseMoveHandle);
+				document.removeEventListener("click", onMouseClickHandle);
 			};
-		}, [
-			thumbsState,
-			mouseDown,
-			lowHandleRef,
-			highHandleRef,
-			containerRef,
-			onChangeCapture,
-			maxValue,
-			minValue,
-			step,
-			low,
-			high,
-		]);
+		}, [onMouseUpHandle, onMouseDownHandle, onMouseMoveHandle, onMouseClickHandle]);
 
 		//#region Generation of positioning styles
 
@@ -205,16 +277,31 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 		//#region  Generation of tick markers
 
 		const genTicks = (): React.ReactNode => {
+			const CUSTOM_SCALE_VALUE = 4;
+
 			const fullRange = maxValue - minValue;
-			const tickCount = fullRange / step / 4;
+			const tickCount = fullRange / step / CUSTOM_SCALE_VALUE;
 			const retval = [];
+
+			const curLow = Math.abs(minValue) + thumbsState.boundaries["low"].value;
+			const curHigh = Math.abs(minValue) + thumbsState.boundaries["high"].value;
+
 			for (let i = 0; i < tickCount; i++) {
-				retval.push({ key: `tick-${i}`, tag: i + 1, left: `${i * (100 / tickCount)}%` });
+				const tickValue = i * step * CUSTOM_SCALE_VALUE;
+				if (tickValue < curLow || tickValue > curHigh) {
+					retval.push({ key: `tick-${i}`, light: true, left: `${i * (100 / tickCount)}%` });
+				} else if (tickValue > curLow && tickValue < curHigh) {
+					retval.push({ key: `tick-${i}`, light: false, left: `${i * (100 / tickCount)}%` });
+				}
 			}
 			return (
 				<>
-					{retval.map(({ key, tag, left }) => (
-						<span key={key} className={classes.tick} style={{ left }} />
+					{retval.map(({ key, light, left }) => (
+						<span
+							key={key}
+							className={light ? classes.lightTick : classes.darkTick}
+							style={{ left }}
+						/>
 					))}
 				</>
 			);
