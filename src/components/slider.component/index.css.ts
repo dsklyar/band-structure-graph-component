@@ -41,12 +41,12 @@ export const styles = {
 	thumbInactive: {
 		extend: "thumb",
 		"&:hover": {
-			boxShadow: "0px 0px 0px 8px rgba(253, 65, 60, 0.16)",
+			boxShadow: "0px 0px 0px 8px rgba(253, 65, 60, 0.2)",
 		},
 	},
 	thumbActive: {
 		extend: "thumb",
-		boxShadow: "0px 0px 0px 14px rgba(253, 65, 60, 0.16)",
+		boxShadow: "0px 0px 0px 14px rgba(253, 65, 60, 0.2)",
 	},
 	tick: {
 		height: 2,

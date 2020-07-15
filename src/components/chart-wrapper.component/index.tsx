@@ -11,8 +11,8 @@ import { LineChartComponent } from "../line-chart.component";
 const useStyles = createUseStyles(styles);
 
 const DEFAULT_AXIS_DOMAIN: IAxisDomainState = {
-	dataMin: -4,
-	dataMax: 6,
+	dataMin: -10,
+	dataMax: 10,
 };
 
 interface IProps {
@@ -71,8 +71,8 @@ export const ChartWrapperComponent: React.FC<IProps> = ({
 					minValue={-10}
 					step={1}
 					current={{
-						low: -10,
-						high: 10,
+						low: axisDomain.dataMin,
+						high: axisDomain.dataMax,
 					}}
 					onChangeCapture={onChangeCapture}
 				/>
