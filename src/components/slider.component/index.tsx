@@ -260,7 +260,6 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 		//#endregion
 
 		//#region  Generation of tick markers
-		// TODO add last tick mark at 100%
 		const genTicks = (): React.ReactNode => {
 			const CUSTOM_SCALE_VALUE = 4;
 
@@ -271,7 +270,7 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 			const curLow = Math.abs(minValue) + thumbsState.boundaries["low"].value;
 			const curHigh = Math.abs(minValue) + thumbsState.boundaries["high"].value;
 
-			for (let i = 0; i < tickCount; i++) {
+			for (let i = 0; i <= tickCount; i++) {
 				const tickValue = i * step * CUSTOM_SCALE_VALUE;
 				if (tickValue < curLow || tickValue > curHigh) {
 					retval.push({ key: `tick-${i}`, light: true, left: `${i * (100 / tickCount)}%` });
