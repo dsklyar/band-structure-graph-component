@@ -3,7 +3,8 @@
 ## Set-up
 
 1. run `npm install` command and wait for install to complete
-2. run `npm start` command and wait for web-page to open
+2. run `npm install -g webpack-dev-server` commnad to install webpack server
+3. run `npm start` command and wait for web-page to open
 
 ## How to use
 
