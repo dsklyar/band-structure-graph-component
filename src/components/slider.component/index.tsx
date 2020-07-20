@@ -59,12 +59,10 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 							thumbsState.boundaries["high"].value !== high;
 
 						hasChanged &&
-							setTimeout(() => {
-								onChangeCapture(
-									thumbsState.boundaries["low"].value,
-									thumbsState.boundaries["high"].value,
-								);
-							}, 100);
+							onChangeCapture(
+								thumbsState.boundaries["low"].value,
+								thumbsState.boundaries["high"].value,
+							);
 					}
 				}
 			},
@@ -95,16 +93,8 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 			},
 			[thumbsState],
 		);
-		const onMouseClickHandle = React.useCallback(
-			(e: MouseEvent): void => {
-				const rect = containerRef.current?.getBoundingClientRect();
-
-				// TODO Needs refactoring
-
-				if (!rect || !containerRef.current?.contains(e.target as Node | null)) {
-					return;
-				}
-
+		const generateMouseScope = React.useCallback(
+			(rect: DOMRect, e: MouseEvent): [number, number, boolean, number, number] => {
 				const curLow = thumbsState.boundaries["low"].value;
 				const curHigh = thumbsState.boundaries["high"].value;
 
@@ -121,6 +111,20 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 				const isNextTick = tickRemainder >= 0.5;
 
 				const tickedValue = isNextTick ? Math.floor(value / step) + 1 : Math.floor(value / step);
+
+				return [curLow, curHigh, isSafe, value, tickedValue];
+			},
+			[maxValue, minValue, step, thumbsState.boundaries],
+		);
+		const onMouseClickHandle = React.useCallback(
+			(e: MouseEvent): void => {
+				const rect = containerRef.current?.getBoundingClientRect();
+
+				if (!rect || !containerRef.current?.contains(e.target as Node | null)) {
+					return;
+				}
+
+				const [curLow, curHigh, isSafe, value, tickedValue] = generateMouseScope(rect, e);
 
 				const isLowThumbCloser = Math.abs(low - value) < Math.abs(high - value);
 				const otherHandleValue = isLowThumbCloser ? curHigh : curLow;
@@ -144,15 +148,12 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 				if (onChangeCapture && isSafe && !isOverlapping) {
 					const hasChanged = thumbsState.boundaries[thumbKey].value !== tickedValue;
 
-					hasChanged &&
-						setTimeout(() => {
-							thumbKey === "low"
-								? onChangeCapture(tickedValue, thumbsState.boundaries["high"].value)
-								: onChangeCapture(thumbsState.boundaries["low"].value, tickedValue);
-						}, 100);
+					hasChanged && thumbKey === "low"
+						? onChangeCapture(tickedValue, thumbsState.boundaries["high"].value)
+						: onChangeCapture(thumbsState.boundaries["low"].value, tickedValue);
 				}
 			},
-			[high, low, maxValue, minValue, onChangeCapture, step, thumbsState],
+			[generateMouseScope, high, low, onChangeCapture, thumbsState],
 		);
 		const onMouseMoveHandle = React.useCallback(
 			(e: MouseEvent): void => {
@@ -161,22 +162,7 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 					return;
 				}
 
-				const curLow = thumbsState.boundaries["low"].value;
-				const curHigh = thumbsState.boundaries["high"].value;
-
-				const [start, end] = [rect.left, rect.right];
-				const valueRange = maxValue - minValue;
-				const pixelRange = end - start;
-
-				const isSafe = start <= e.x && e.x <= end;
-
-				const pixelPercent = (e.x - start) / pixelRange;
-				const value = pixelPercent * valueRange - Math.abs(minValue);
-
-				const tickRemainder = value / step - Math.floor(value / step);
-				const isNextTick = tickRemainder >= 0.5;
-
-				const tickedValue = isNextTick ? Math.floor(value / step) + 1 : Math.floor(value / step);
+				const [curLow, curHigh, isSafe, value, tickedValue] = generateMouseScope(rect, e);
 
 				const isLowThumbSelected = thumbsState.selected === "low";
 
@@ -196,7 +182,7 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 					  })
 					: null;
 			},
-			[maxValue, minValue, mouseDown, step, thumbsState],
+			[generateMouseScope, mouseDown, thumbsState],
 		);
 
 		//#endregion

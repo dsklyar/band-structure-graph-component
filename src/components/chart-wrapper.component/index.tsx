@@ -49,10 +49,12 @@ export const ChartWrapperComponent: React.FC<IProps> = ({
 	};
 
 	const onChangeCapture = (lowValue: number, highValue: number): void => {
-		setAxisDomain({
-			dataMin: lowValue,
-			dataMax: highValue,
-		});
+		setTimeout(() => {
+			setAxisDomain({
+				dataMin: lowValue,
+				dataMax: highValue,
+			});
+		}, 150);
 	};
 
 	return (
