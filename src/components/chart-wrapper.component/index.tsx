@@ -32,20 +32,20 @@ export const ChartWrapperComponent: React.FC<IProps> = ({
 	const [axisDomain, setAxisDomain] = React.useState<IAxisDomainState>(DEFAULT_AXIS_DOMAIN);
 	const chartWrapperRef = React.useRef<HTMLDivElement>(null);
 
-	const onSaveClick = () => {
-		if (!chartWrapperRef.current) {
-			return;
-		}
-		/**
-		 * TODO
-		 * This could cause an error when converting
-		 * DOM to image, find a better solution
-		 */
-		setWatermark(true);
-		DomToImage.toBlob(chartWrapperRef.current).then((blob) => {
-			saveAs(blob, "band-structure-graph");
+	React.useEffect(() => {
+		if (chartWrapperRef.current && watermarkEnabled) {
+			const promisedBlob = DomToImage.toBlob(chartWrapperRef.current);
+
 			setWatermark(false);
-		});
+
+			promisedBlob.then((blob) => {
+				saveAs(blob, "band-structure-graph");
+			});
+		}
+	}, [watermarkEnabled]);
+
+	const onSaveClick = () => {
+		setWatermark(true);
 	};
 
 	const onChangeCapture = (lowValue: number, highValue: number): void => {

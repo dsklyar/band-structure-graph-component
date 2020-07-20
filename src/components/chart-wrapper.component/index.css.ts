@@ -9,6 +9,7 @@ export const styles = {
 	chartWrapper: {
 		width: "100%",
 		height: 300,
+		position: "relative",
 		backgroundColor: "#1E1E1E",
 	},
 	toolbar: {
@@ -17,8 +18,9 @@ export const styles = {
 	},
 	watermarkWrapper: {
 		position: "absolute",
-		bottom: "10%",
-		right: 0,
+		opacity: 0.5,
+		bottom: "5%",
+		right: "5%",
 	},
 	saveButton: {
 		float: "right",
@@ -32,5 +34,9 @@ export const styles = {
 		fontFamily: "monospace",
 		fontSize: 15,
 		userSelect: "none",
+		transition: "box-shadow .3s ease-in-out",
+		"&:hover": {
+			boxShadow: "0px 0px 5px 1px black",
+		},
 	},
 };

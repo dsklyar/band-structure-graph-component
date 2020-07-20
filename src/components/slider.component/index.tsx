@@ -260,7 +260,7 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 		//#endregion
 
 		//#region  Generation of tick markers
-
+		// TODO add last tick mark at 100%
 		const genTicks = (): React.ReactNode => {
 			const CUSTOM_SCALE_VALUE = 4;
 
