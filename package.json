@@ -22,13 +22,13 @@
     "recharts": "^1.8.5"
   },
   "devDependencies": {
-    "@types/dom-to-image": "^2.6.1",
-    "@types/file-saver": "^2.0.1",
     "@babel/core": "^7.10.4",
     "@storybook/addon-actions": "^5.3.19",
     "@storybook/addon-links": "^5.3.19",
     "@storybook/addons": "^5.3.19",
     "@storybook/react": "^5.3.19",
+    "@types/dom-to-image": "^2.6.1",
+    "@types/file-saver": "^2.0.1",
     "@types/react": "^16.9.41",
     "@types/react-dom": "^16.9.8",
     "@types/recharts": "^1.8.14",
