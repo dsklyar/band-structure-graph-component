@@ -146,14 +146,13 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 
 					hasChanged &&
 						setTimeout(() => {
-							onChangeCapture(
-								thumbsState.boundaries["low"].value,
-								thumbsState.boundaries["high"].value,
-							);
+							thumbKey === "low"
+								? onChangeCapture(tickedValue, thumbsState.boundaries["high"].value)
+								: onChangeCapture(thumbsState.boundaries["low"].value, tickedValue);
 						}, 100);
 				}
 			},
-			[high, low, maxValue, minValue, step, thumbsState],
+			[high, low, maxValue, minValue, onChangeCapture, step, thumbsState],
 		);
 		const onMouseMoveHandle = React.useCallback(
 			(e: MouseEvent): void => {
