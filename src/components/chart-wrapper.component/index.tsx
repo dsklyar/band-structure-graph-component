@@ -36,6 +36,14 @@ export const ChartWrapperComponent: React.FC<IProps> = ({
 		if (chartWrapperRef.current && watermarkEnabled) {
 			const promisedBlob = DomToImage.toBlob(chartWrapperRef.current);
 
+			/**
+			 * TODO
+			 * Food for thought:
+			 * Consider saving a blob on graph change -> especially when marker is added**
+			 * And composing an image with watermark internally -> avoids rerender with watermark
+			 * Could this be better or not?
+			 */
+
 			setWatermark(false);
 
 			promisedBlob.then((blob) => {
