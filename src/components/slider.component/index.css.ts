@@ -27,6 +27,13 @@ export const styles = {
 		backgroundColor: "#FD413C",
 		opacity: 0.7,
 	},
+	label: {
+		color: "#CBCBCB",
+		fontFamily: "monospace",
+		fontSize: 11,
+		position: "absolute",
+		transform: "translate(-6px, -75%)",
+	},
 	thumb: {
 		width: 12,
 		height: 12,
@@ -47,6 +54,18 @@ export const styles = {
 	thumbActive: {
 		extend: "thumb",
 		boxShadow: "0px 0px 0px 14px rgba(253, 65, 60, 0.2)",
+	},
+	mark: {
+		position: "absolute",
+		fontFamily: "monospace",
+		fontSize: "0.8rem",
+		transform: "translateX(-50%)",
+		color: "#CBCBCB",
+		top: 25,
+	},
+	curMark: {
+		extend: "mark",
+		color: "#FFF",
 	},
 	tick: {
 		height: 2,

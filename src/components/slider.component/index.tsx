@@ -11,6 +11,7 @@ enum MouseButton {
 }
 
 interface IProps {
+	label?: string;
 	minValue: number;
 	maxValue: number;
 	step: number;
@@ -27,7 +28,7 @@ interface IThumbsState {
 }
 
 export const SliderComponent: React.FC<IProps> = React.memo(
-	({ minValue, maxValue, step, current: { low, high }, onChangeCapture }: IProps) => {
+	({ label, minValue, maxValue, step, current: { low, high }, onChangeCapture }: IProps) => {
 		const classes = useStyles();
 
 		const lowHandleRef = React.useRef<HTMLDivElement>(null);
@@ -266,6 +267,7 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 			const fullRange = maxValue - minValue;
 			const tickCount = fullRange / step / CUSTOM_SCALE_VALUE;
 			const retval = [];
+			const marks = [];
 
 			const curLow = Math.abs(minValue) + thumbsState.boundaries["low"].value;
 			const curHigh = Math.abs(minValue) + thumbsState.boundaries["high"].value;
@@ -277,9 +279,41 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 				} else if (tickValue > curLow && tickValue < curHigh) {
 					retval.push({ key: `tick-${i}`, light: false, left: `${i * (100 / tickCount)}%` });
 				}
+
+				if (i === 0 || i === tickCount) {
+					marks.push({
+						key: `mark-${i}`,
+						left: `${i * (100 / tickCount)}%`,
+						light: false,
+						value: i * (fullRange / tickCount) - maxValue,
+					});
+				}
 			}
+
+			if (curLow !== 0) {
+				marks.push({
+					key: `mark-low`,
+					left: `${curLow * (100 / fullRange)}%`,
+					light: true,
+					value: thumbsState.boundaries["low"].value,
+				});
+			}
+			if (curHigh !== tickCount * step * CUSTOM_SCALE_VALUE) {
+				marks.push({
+					key: `mark-high`,
+					left: `${curHigh * (100 / fullRange)}%`,
+					light: true,
+					value: thumbsState.boundaries["high"].value,
+				});
+			}
+
 			return (
 				<>
+					{marks.map(({ key, left, light, value }) => (
+						<span key={key} className={light ? classes.curMark : classes.mark} style={{ left }}>
+							{value}
+						</span>
+					))}
 					{retval.map(({ key, light, left }) => (
 						<span
 							key={key}
@@ -295,6 +329,7 @@ export const SliderComponent: React.FC<IProps> = React.memo(
 
 		return (
 			<div className={classes.spec}>
+				{label ? <div className={classes.label}>{label}</div> : null}
 				<div ref={containerRef} className={classes.container}>
 					<div className={classes.rail} />
 					<div className={classes.track} style={genTrackStyle()} />

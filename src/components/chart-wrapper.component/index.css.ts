@@ -15,6 +15,8 @@ export const styles = {
 	toolbar: {
 		height: 50,
 		padding: "0px 10px",
+		display: "flex",
+		alignItems: "center",
 	},
 	watermarkWrapper: {
 		position: "absolute",
@@ -23,18 +25,18 @@ export const styles = {
 		right: "5%",
 	},
 	saveButton: {
-		float: "right",
 		height: 30,
 		width: 60,
 		borderRadius: 15,
 		backgroundColor: "#342C2F",
 		margin: 10,
+		marginLeft: "auto",
 		color: "#FD413C",
 		fontWeight: "bold",
 		fontFamily: "monospace",
 		fontSize: 15,
 		userSelect: "none",
-		transition: "box-shadow .3s ease-in-out",
+		transition: "box-shadow .2s ease-in-out",
 		"&:hover": {
 			boxShadow: "0px 0px 5px 1px black",
 		},

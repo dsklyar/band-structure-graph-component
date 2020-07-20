@@ -29,7 +29,7 @@ export const ChartWrapperComponent: React.FC<IProps> = ({
 }: React.PropsWithChildren<IProps>) => {
 	const classes = useStyles();
 	const [watermarkEnabled, setWatermark] = React.useState<boolean>();
-	const [axisDomain, setAxisDomain] = React.useState<IAxisDomainState>(DEFAULT_AXIS_DOMAIN);
+	const [curAxisDomain, setCurAxisDomain] = React.useState<IAxisDomainState>(DEFAULT_AXIS_DOMAIN);
 	const chartWrapperRef = React.useRef<HTMLDivElement>(null);
 
 	React.useEffect(() => {
@@ -58,7 +58,7 @@ export const ChartWrapperComponent: React.FC<IProps> = ({
 
 	const onChangeCapture = (lowValue: number, highValue: number): void => {
 		setTimeout(() => {
-			setAxisDomain({
+			setCurAxisDomain({
 				dataMin: lowValue,
 				dataMax: highValue,
 			});
@@ -68,7 +68,11 @@ export const ChartWrapperComponent: React.FC<IProps> = ({
 	return (
 		<div className={classes.container}>
 			<div ref={chartWrapperRef} className={classes.chartWrapper}>
-				<LineChartComponent data={data} dataMin={axisDomain.dataMin} dataMax={axisDomain.dataMax} />
+				<LineChartComponent
+					data={data}
+					dataMin={curAxisDomain.dataMin}
+					dataMax={curAxisDomain.dataMax}
+				/>
 				{watermarkEnabled ? (
 					<div className={classes.watermarkWrapper}>
 						<WatermarkComponent />
@@ -77,12 +81,13 @@ export const ChartWrapperComponent: React.FC<IProps> = ({
 			</div>
 			<div className={classes.toolbar}>
 				<SliderComponent
-					maxValue={10}
-					minValue={-10}
+					label={"Energy Range"}
+					maxValue={DEFAULT_AXIS_DOMAIN.dataMax}
+					minValue={DEFAULT_AXIS_DOMAIN.dataMin}
 					step={1}
 					current={{
-						low: axisDomain.dataMin,
-						high: axisDomain.dataMax,
+						low: curAxisDomain.dataMin,
+						high: curAxisDomain.dataMax,
 					}}
 					onChangeCapture={onChangeCapture}
 				/>
