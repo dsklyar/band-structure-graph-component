@@ -1,6 +1,8 @@
 # "Band Structure" Chart Component
 
-## [Live Demo](https://dsklyar.github.io/band-structure-graph-component/)
+This repo is a showcase of work done for a challenge assigned by the material project team at UC Berkeley. The challenge was to take on designing and features used to replace the static plots of [band structure](https://en.wikipedia.org/wiki/Electronic_band_structure). The core request were plotting a graph derived from provided JSON file, allowing user to "mark" the graph, and saving functionality with a watermark. Example showcased on material's project website [here](https://materialsproject.org/materials/mp-3666/).
+
+Here is the [live demo](https://dsklyar.github.io/band-structure-graph-component/) of my take on it
 
 ## Set-up:
 
